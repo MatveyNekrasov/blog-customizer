@@ -1,5 +1,11 @@
 import { createRoot } from 'react-dom/client';
-import { StrictMode, CSSProperties, useState } from 'react';
+import {
+	StrictMode,
+	CSSProperties,
+	useState,
+	SyntheticEvent,
+	useRef,
+} from 'react';
 import clsx from 'clsx';
 
 import { Article } from './components/article/Article';
@@ -29,15 +35,35 @@ const App = () => {
 	const [paramsFormState, setFormState] = useState<ArticleStateType>({
 		...defaultArticleState,
 	});
+	const mainRef = useRef<HTMLDivElement>(null);
+
+	const setStyling = (
+		element: HTMLElement | null,
+		paramObj: ArticleStateType
+	) => {
+		if (!element) return;
+		element.style.setProperty('--font-family', paramObj.fontFamilyOption.value);
+		element.style.setProperty('--font-size', paramObj.fontSizeOption.value);
+		element.style.setProperty('--font-color', paramObj.fontColor.value);
+		element.style.setProperty('--container-width', paramObj.contentWidth.value);
+		element.style.setProperty('--bg-color', paramObj.backgroundColor.value);
+	};
 
 	const handleResetClick = () => {
 		setFormState({
 			...defaultArticleState,
 		});
+		setStyling(mainRef.current, defaultArticleState);
+	};
+
+	const handleSubmit = (event: SyntheticEvent) => {
+		event.preventDefault();
+		setStyling(mainRef.current, paramsFormState);
 	};
 
 	return (
 		<div
+			ref={mainRef}
 			className={clsx(styles.main)}
 			style={
 				{
@@ -48,7 +74,7 @@ const App = () => {
 					'--bg-color': defaultArticleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm onReset={handleResetClick}>
+			<ArticleParamsForm onReset={handleResetClick} onSubmit={handleSubmit}>
 				<Text weight={800} size={31}>
 					Задайте параметры
 				</Text>

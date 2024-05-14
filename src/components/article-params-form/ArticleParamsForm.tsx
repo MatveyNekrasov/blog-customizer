@@ -1,17 +1,19 @@
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
-import { ReactNode, useState, useEffect, useRef } from 'react';
+import { ReactNode, useState, useEffect, useRef, SyntheticEvent } from 'react';
 import clsx from 'clsx';
 
 import styles from './ArticleParamsForm.module.scss';
 
 type TArticleParamsForm = {
 	onReset: () => void;
+	onSubmit: (event: SyntheticEvent) => void;
 	children: ReactNode;
 };
 
 export const ArticleParamsForm = ({
 	onReset,
+	onSubmit,
 	children,
 }: TArticleParamsForm) => {
 	const [isSideOpen, setIsOpen] = useState(false);
@@ -50,7 +52,7 @@ export const ArticleParamsForm = ({
 					className={clsx(styles.container, {
 						[styles.container_open]: isSideOpen,
 					})}>
-					<form className={styles.form}>
+					<form className={styles.form} onSubmit={onSubmit}>
 						{children}
 						<div className={styles.bottomContainer}>
 							<Button title='Сбросить' type='reset' onClick={onReset} />
